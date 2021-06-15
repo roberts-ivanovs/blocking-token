@@ -1,17 +1,14 @@
 // Load dependencies
-import { ethers } from "hardhat";
-import { Signer } from "ethers";
+import { ethers, network } from "hardhat";
+import { Signer, providers } from "ethers";
 import chai from "chai";
 import { expect } from 'chai';
 import { solidity } from "ethereum-waffle";
+import { autoMineOff, autoMineOn, mineBlocks } from "./helper/utils";
 // inject domain specific assertion methods
 chai.use(solidity);
 
-// Load compiled artifacts
-// Start test block
 describe('Unspendable', function () {
-  // const [owner, anotherUser] = accounts;
-
   beforeEach(async function () {
     // Deploy a new Unspendable contract for each test
     this.UnspendableFactory = await ethers.getContractFactory("Unspendable");
@@ -19,6 +16,11 @@ describe('Unspendable', function () {
     [this.owner, this.anotherUser] = await ethers.getSigners();
     this.contract = await this.UnspendableFactory.deploy('BlockSpendersERC20', 'asd')
   });
+
+  afterEach(async () => {
+    // Do not leak test states
+    await autoMineOn();
+  })
 
   // Test case
   it('Name correct', async function () {
@@ -47,6 +49,20 @@ describe('Unspendable', function () {
     expect((await this.contract.balanceOf(this.anotherUser.getAddress())).toString()).to.equal(
       '0',
     );
+  });
+  it('Unsuccessful transfer of tokens because everything is one big transaction (constructed from TS)', async function () {
+
+    await this.contract.connect(this.owner).increaseAllowance(this.anotherUser.getAddress(), '100');
+    await autoMineOff();
+    // -- Block start --
+    await this.contract.connect(this.anotherUser).transferFrom(this.owner.getAddress(), this.anotherUser.getAddress(), '5');
+    await this.contract.connect(this.anotherUser).transferFrom(this.owner.getAddress(), this.anotherUser.getAddress(), '10');
+    await this.contract.connect(this.anotherUser).transfer(this.owner.getAddress(), '12'); // assume that this part failed
+    // -- Block end --
+    await mineBlocks(1);
+    // TODO: Investigate why the `anotherUser` balance is not equal to zero?
+    // I would assume that the whole block would get reset...
+    expect((await this.contract.balanceOf(this.anotherUser.getAddress())).toString()).to.equal('0');
   });
   it('Attempt to spend tokens in the same block as received them', async function () {
     const testContract = await this.TestUnspendableFactory.connect(this.owner).deploy();
