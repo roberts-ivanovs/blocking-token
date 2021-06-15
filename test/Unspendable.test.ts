@@ -1,7 +1,10 @@
 // Load dependencies
-const { accounts, contract } = require('@openzeppelin/test-environment');
-const { expectRevert } = require('@openzeppelin/test-helpers');
-const { expect } = require('chai');
+import { accounts, contract } from '@openzeppelin/test-environment';
+import chai from "chai";
+import { expect } from 'chai';
+import { solidity } from "ethereum-waffle";
+// inject domain specific assertion methods
+chai.use(solidity);
 
 // Load compiled artifacts
 const Unspendable = contract.fromArtifact('Unspendable');
@@ -47,19 +50,18 @@ describe('Unspendable', function () {
     );
   });
   it('Attempt to spend tokens in the same block as received them', async function () {
-    testContract = await TestUnspendable.new({ from: owner });
+    const testContract = await TestUnspendable.new({ from: owner });
     await this.contract.increaseAllowance(testContract.address, '100', {
       from: owner,
     });
-    await expectRevert(
+    await expect(
       testContract.testMoneyGrab(this.contract.address, owner, '10', '15', {
         from: owner,
-      }),
-      'Cannot transfer at the same transaction as when receiving!',
-    );
+      })
+    ).to.be.revertedWith("Cannot transfer at the same transaction as when receiving!");
   });
   it('Attempt to spend past tokens in the same block as receiving new ones', async function () {
-    testContract = await TestUnspendable.new({ from: owner });
+    const testContract = await TestUnspendable.new({ from: owner });
     // increase allowance so the testContract can receive extra funds within `testMoneyGrab` call
     await this.contract.increaseAllowance(testContract.address, '10', {
       from: owner,
