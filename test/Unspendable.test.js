@@ -58,4 +58,18 @@ describe('Unspendable', function () {
       'Cannot transfer at the same transaction as when receiving!',
     );
   });
+  it('Attempt to spend past tokens in the same block as receiving new ones', async function () {
+    testContract = await TestUnspendable.new({ from: owner });
+    // increase allowance so the testContract can receive extra funds within `testMoneyGrab` call
+    await this.contract.increaseAllowance(testContract.address, '10', {
+      from: owner,
+    });
+    // Block X: give test contract 5 coins
+    await this.contract.transfer(testContract.address, '5', { from: owner });
+    // Block X+1: The smart contract gets new coins as well as transfers 5 coins
+    // back(because 5 coins were already previously available).
+    await testContract.testMoneyGrab(this.contract.address, owner, '5', '5', {
+      from: owner,
+    });
+  });
 });
