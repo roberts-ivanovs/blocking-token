@@ -27,17 +27,17 @@ describe('Unspendable', function () {
   it('Successful transfer of tokens', async function () {
     // Send tokens: owner -> anotherUser -> owner
     // NOTE: Each contract call is it's own separate transaction
-    await this.contract.transfer(anotherUser, "10", {from: owner});
-    expect((await this.contract.balanceOf(owner)).toString()).to.equal("99999999999999999990");
-    expect((await this.contract.balanceOf(anotherUser)).toString()).to.equal("10");
-    await this.contract.transfer(owner, "10", {from: anotherUser});
-    expect((await this.contract.balanceOf(owner)).toString()).to.equal("100000000000000000000");
-    expect((await this.contract.balanceOf(anotherUser)).toString()).to.equal("0");
   });
-  xit('Attempt to spend tokens in the same block as received them', async function () {
-    // TODO
-    // Option1: Create a new smart contract that will try to call all of the
-    //          necessary transactions from Unspendable contract
-    // Option2: Figure out how to call all of contract methods as a single transaction from JS.
+  it('Attempt to spend tokens in the same block as received them', async function () {
+    testContract = await TestUnspendable.new({ from: owner });
+    await this.contract.increaseAllowance(testContract.address, '100', {
+      from: owner,
+    });
+    await expectRevert(
+      testContract.testMoneyGrab(this.contract.address, owner, '10', '15', {
+        from: owner,
+      }),
+      'Cannot transfer at the same transaction as when receiving!',
+    );
   });
 });
