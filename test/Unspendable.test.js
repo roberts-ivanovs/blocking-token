@@ -34,4 +34,10 @@ describe('Unspendable', function () {
     expect((await this.contract.balanceOf(owner)).toString()).to.equal("100000000000000000000");
     expect((await this.contract.balanceOf(anotherUser)).toString()).to.equal("0");
   });
+  xit('Attempt to spend tokens in the same block as received them', async function () {
+    // TODO
+    // Option1: Create a new smart contract that will try to call all of the
+    //          necessary transactions from Unspendable contract
+    // Option2: Figure out how to call all of contract methods as a single transaction from JS.
+  });
 });
