@@ -24,11 +24,14 @@ describe('Unspendable', function () {
   it('Owner has the coins', async function () {
     expect((await this.contract.balanceOf(owner)).toString()).to.equal("100000000000000000000");
   });
-  it('Another user cannot re-transfer just received tokens', async function () {
-    await this.contract.increaseAllowance(anotherUser, "10000", { from: owner });
-    // TODO There's problems caused by this because each test case+contract deployment is a single transaction.
-    // Maybe look into other test frameworks?
-    expect((await this.contract.allowance(owner, anotherUser)).toString()).to.equal("10000");
+  it('Successful transfer of tokens', async function () {
+    // Send tokens: owner -> anotherUser -> owner
+    // NOTE: Each contract call is it's own separate transaction
     await this.contract.transfer(anotherUser, "10", {from: owner});
+    expect((await this.contract.balanceOf(owner)).toString()).to.equal("99999999999999999990");
+    expect((await this.contract.balanceOf(anotherUser)).toString()).to.equal("10");
+    await this.contract.transfer(owner, "10", {from: anotherUser});
+    expect((await this.contract.balanceOf(owner)).toString()).to.equal("100000000000000000000");
+    expect((await this.contract.balanceOf(anotherUser)).toString()).to.equal("0");
   });
 });
