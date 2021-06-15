@@ -25,7 +25,7 @@ contract TestUnspendable {
             address(this),
             _amount2
         );
-        // Return back the received tokens (expected failure here)
+        // Return back the received tokens (expected failure here unless tokens were already available)
         _unspendableBlock.transfer(_tokenOwnerAddress, _amount1);
     }
 }
