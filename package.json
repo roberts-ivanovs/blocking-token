@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "mocha --exit --recursive"
+    "test": "truffle compile && mocha --exit --recursive"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0",
