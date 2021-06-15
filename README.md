@@ -1,4 +1,4 @@
+# ERC20 with a catch: cannot spend tokens in the same block as when they were received
+
         yarn install
-        npx hardhat compile
-        npx hardhat test
-        truffle compile && npm test
+        yarn test
