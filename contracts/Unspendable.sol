@@ -5,9 +5,8 @@ pragma solidity ^0.8;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Unspendable is ERC20 {
-    // `value` represents the block number of when the user had received his
-    // last "gains"
-    mapping(address => uint256) private _volitaleBlocked;
+    // `value` represents the mapping of `block ID` -> `frozen funds`
+    mapping(address => mapping(uint256 => uint256)) private _volitalteFrozen;
 
     constructor(string memory name, string memory symbol) ERC20(name, symbol) {
         _mint(msg.sender, 100 * 10**uint256(decimals()));
@@ -36,10 +35,12 @@ contract Unspendable is ERC20 {
             // Make sure that the user is not transfering tokens at the same
             // block as he had received them
             require(
-                block.number > _volitaleBlocked[from],
+                amount <=
+                    (ERC20(this).balanceOf(from) -
+                        _volitalteFrozen[from][block.number]),
                 "Cannot transfer at the same transaction as when receiving!"
             );
-            _volitaleBlocked[to] = block.number;
+            _volitalteFrozen[to][block.number] += amount;
         }
     }
 }
