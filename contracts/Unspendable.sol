@@ -36,7 +36,7 @@ contract Unspendable is ERC20 {
             // Make sure that the user is not transfering tokens at the same
             // block as he had received them
             require(
-                _volitaleBlocked[from] > (block.number - 1),
+                block.number > _volitaleBlocked[from],
                 "Cannot transfer at the same transaction as when receiving!"
             );
             _volitaleBlocked[to] = block.number;
