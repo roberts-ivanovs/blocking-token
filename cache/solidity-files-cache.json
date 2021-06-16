@@ -38,8 +38,8 @@
       ]
     },
     "/mnt/BaseStorage/doodles/blockchain/Ethereum/blocking-token/contracts/Unspendable.sol": {
-      "lastModificationDate": 1623858781275,
-      "contentHash": "7f914f9b526063767d95d62dd277eeb4",
+      "lastModificationDate": 1623860641543,
+      "contentHash": "fea1d01ba80717ef748028f0cac3ff1a",
       "sourceName": "contracts/Unspendable.sol",
       "solcConfig": {
         "version": "0.8.4",
