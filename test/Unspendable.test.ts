@@ -80,5 +80,6 @@ describe('Unspendable', function () {
     // Block X+1: The smart contract gets new coins as well as transfers 5 coins
     // back(because 5 coins were already previously available).
     await testContract.connect(this.owner).testMoneyGrab(this.contract.address, this.owner.getAddress(), '5', '5');
+    expect((await this.contract.balanceOf(testContract.address)).toString()).to.equal('10');
   });
 });
