@@ -36,7 +36,7 @@ contract Unspendable is ERC20 {
             // block as he had received them
             require(
                 amount <=
-                    (ERC20(this).balanceOf(from) -
+                    (this.balanceOf(from) -
                         _volitalteFrozen[from][block.number]),
                 "Cannot transfer at the same transaction as when receiving!"
             );
