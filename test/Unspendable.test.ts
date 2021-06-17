@@ -56,8 +56,7 @@ describe('Unspendable', function () {
       testContract.testOwnerMintingBlocker(this.anotherUser.getAddress(), "10000")
     ).to.be.revertedWith("Cannot transfer at the same transaction as when receiving!");
   });
-  xit('Unsuccessful transfer of tokens because everything is one big transaction (constructed from TS)', async function () {
-
+  it('Unsuccessful transfer of tokens because everything is one big transaction (constructed from TS)', async function () {
     await this.contract.connect(this.owner).increaseAllowance(this.anotherUser.getAddress(), '100');
     await autoMineOff();
     // -- Block start --
@@ -66,9 +65,7 @@ describe('Unspendable', function () {
     await this.contract.connect(this.anotherUser).transfer(this.owner.getAddress(), '12'); // assume that this part failed
     // -- Block end --
     await mineBlocks(1);
-    // TODO: Investigate why the `anotherUser` balance is not equal to zero?
-    // I would assume that the whole block would get reset...
-    expect((await this.contract.balanceOf(this.anotherUser.getAddress())).toString()).to.equal('0');
+    expect((await this.contract.balanceOf(this.anotherUser.getAddress())).toString()).to.equal('15');
   });
   it('Attempt to spend tokens in the same block as received them', async function () {
     const testContract = await this.TestUnspendableFactory.connect(this.owner).deploy();
