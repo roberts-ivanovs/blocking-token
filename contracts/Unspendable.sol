@@ -36,11 +36,11 @@ contract Unspendable is ERC20 {
         address to,
         uint256 amount
     ) internal override {
+        // Exclude minting
         if (from != address(0) && to != address(0)) {
             if (_volitalteFrozen[from].blockNumber != block.number) {
                 _volitalteFrozen[from].amount = 0;
             }
-
             // Make sure that the user is not transfering tokens at the same
             // block as he had received them
             require(
@@ -49,6 +49,9 @@ contract Unspendable is ERC20 {
                         _volitalteFrozen[from].amount),
                 "Cannot transfer at the same transaction as when receiving!"
             );
+        }
+        // Execute always (incl. minting)
+        if (to != address(0)) {
             if (_volitalteFrozen[to].blockNumber == block.number) {
                 _volitalteFrozen[to].amount += amount;
             } else {
