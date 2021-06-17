@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/ivn/Documents/Eth/blocking-token/contracts/_testUnspendable.sol": {
-      "lastModificationDate": 1623912672664,
+      "lastModificationDate": 1623912835468,
       "contentHash": "15353f3ffeac65eff802e542f8120f29",
       "sourceName": "contracts/_testUnspendable.sol",
       "solcConfig": {
@@ -38,8 +38,8 @@
       ]
     },
     "/home/ivn/Documents/Eth/blocking-token/contracts/Unspendable.sol": {
-      "lastModificationDate": 1623912181083,
-      "contentHash": "e09f874ac22d1aa0b9e6a422bbbb4648",
+      "lastModificationDate": 1623915772353,
+      "contentHash": "ccf74d7fd2cef9333a3f0c40d463b76c",
       "sourceName": "contracts/Unspendable.sol",
       "solcConfig": {
         "version": "0.8.4",

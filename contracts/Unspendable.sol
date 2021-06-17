@@ -7,8 +7,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract Unspendable is ERC20 {
 
     struct FrozenTokens {
-        uint256 blockNumber;
-        uint256 amount;
+        uint224 amount;
+        uint32 blockNumber;
     }
     // `value` represents the mapping of `block ID` -> `frozen funds`
     mapping(address => FrozenTokens) private _volitalteFrozen;
@@ -36,15 +36,20 @@ contract Unspendable is ERC20 {
         address to,
         uint256 amount
     ) internal override {
+        // Bail explicitly if transfered amount overflows.
+        assert(amount <= type(uint224).max);
+        uint224 _castAmoint = uint224(amount);
+        uint32 _castBlockNumber = uint32(block.number);
+
         // Exclude minting
         if (from != address(0) && to != address(0)) {
-            if (_volitalteFrozen[from].blockNumber != block.number) {
+            if (_volitalteFrozen[from].blockNumber != _castBlockNumber) {
                 _volitalteFrozen[from].amount = 0;
             }
             // Make sure that the user is not transfering tokens at the same
             // block as he had received them
             require(
-                amount <=
+                _castAmoint <=
                     (this.balanceOf(from) -
                         _volitalteFrozen[from].amount),
                 "Cannot transfer at the same transaction as when receiving!"
@@ -52,12 +57,13 @@ contract Unspendable is ERC20 {
         }
         // Execute always (incl. minting)
         if (to != address(0)) {
-            if (_volitalteFrozen[to].blockNumber == block.number) {
-                _volitalteFrozen[to].amount += amount;
+            if (_volitalteFrozen[to].blockNumber == _castBlockNumber) {
+                // NOTE: This can overflow!
+                _volitalteFrozen[to].amount += _castAmoint;
             } else {
-                _volitalteFrozen[to].amount = amount;
+                _volitalteFrozen[to].amount = _castAmoint;
             }
-            _volitalteFrozen[to].blockNumber = block.number;
+            _volitalteFrozen[to].blockNumber = _castBlockNumber;
         }
     }
 }
