@@ -28,4 +28,10 @@ contract TestUnspendable {
         // Return back the received tokens (expected failure here unless tokens were already available)
         _unspendableBlock.transfer(_tokenOwnerAddress, _amount1);
     }
+
+
+    function testOwnerMintingBlocker(address _tokenTransferAddress, uint256 _amount) public {
+        Unspendable _unspendableBlock = new Unspendable("Test", "t"); // Get minted
+        _unspendableBlock.transfer(_tokenTransferAddress, _amount);
+    }
 }

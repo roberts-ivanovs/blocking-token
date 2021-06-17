@@ -50,6 +50,12 @@ describe('Unspendable', function () {
       '0',
     );
   });
+  it('Owner cannot transfer when minting', async function () {
+    const testContract = await this.TestUnspendableFactory.connect(this.owner).deploy();
+    await expect(
+      testContract.testOwnerMintingBlocker(this.anotherUser.getAddress(), "10000")
+    ).to.be.revertedWith("Cannot transfer at the same transaction as when receiving!");
+  });
   it('Unsuccessful transfer of tokens because everything is one big transaction (constructed from TS)', async function () {
 
     await this.contract.connect(this.owner).increaseAllowance(this.anotherUser.getAddress(), '100');
