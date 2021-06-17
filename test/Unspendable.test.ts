@@ -56,7 +56,7 @@ describe('Unspendable', function () {
       testContract.testOwnerMintingBlocker(this.anotherUser.getAddress(), "10000")
     ).to.be.revertedWith("Cannot transfer at the same transaction as when receiving!");
   });
-  it('Unsuccessful transfer of tokens because everything is one big transaction (constructed from TS)', async function () {
+  xit('Unsuccessful transfer of tokens because everything is one big transaction (constructed from TS)', async function () {
 
     await this.contract.connect(this.owner).increaseAllowance(this.anotherUser.getAddress(), '100');
     await autoMineOff();
@@ -87,5 +87,21 @@ describe('Unspendable', function () {
     // back(because 5 coins were already previously available).
     await testContract.connect(this.owner).testMoneyGrab(this.contract.address, this.owner.getAddress(), '5', '5');
     expect((await this.contract.balanceOf(testContract.address)).toString()).to.equal('10');
+  });
+  it('A lot of users get money transfers, a lot of new blocks get created', async function () {
+    // NOTE: This test only exists to "stress-test" the EVM and to better
+    // evaluate and compare the gas consumption prices under high load.
+    const signers = await ethers.getSigners();
+    const signersWithoutOwner = signers.slice(1, 11);
+    const totalMoneyTransferBlocks = 100;
+    for (let _ = 0; _ < totalMoneyTransferBlocks; _++) {
+      signersWithoutOwner.forEach(async (a) => {
+        // In total: 1000 new `transfer` calls
+        await this.contract.connect(this.owner).transfer(a.getAddress(), '100');
+      });
+    }
+    expect((await this.contract.balanceOf(this.owner.getAddress())).toString()).to.equal(
+      '99999999999999900000',
+    );
   });
 });
