@@ -6,12 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Unspendable is ERC20 {
 
-    struct FrozenTokens {
-        uint224 amount;
-        uint32 blockNumber;
-    }
     // `value` represents the mapping of `block ID` -> `frozen funds`
-    mapping(address => FrozenTokens) private _volitalteFrozen;
+    mapping(address => mapping(uint256 => uint256)) private _volitalteFrozen;
 
     constructor(string memory name, string memory symbol) ERC20(name, symbol) {
         _mint(msg.sender, 100 * 10**uint256(decimals()));
@@ -36,34 +32,17 @@ contract Unspendable is ERC20 {
         address to,
         uint256 amount
     ) internal override {
-        // Bail explicitly if transfered amount overflows.
-        assert(amount <= type(uint224).max);
-        uint224 _castAmoint = uint224(amount);
-        uint32 _castBlockNumber = uint32(block.number);
-
         // Exclude minting
         if (from != address(0) && to != address(0)) {
-            if (_volitalteFrozen[from].blockNumber != _castBlockNumber) {
-                _volitalteFrozen[from].amount = 0;
-            }
-            // Make sure that the user is not transfering tokens at the same
-            // block as he had received them
             require(
-                _castAmoint <=
-                    (this.balanceOf(from) -
-                        _volitalteFrozen[from].amount),
+                amount <=
+                    (this.balanceOf(from) - _volitalteFrozen[from][block.number]),
                 "Cannot transfer at the same transaction as when receiving!"
             );
         }
         // Execute always (incl. minting)
         if (to != address(0)) {
-            if (_volitalteFrozen[to].blockNumber == _castBlockNumber) {
-                // NOTE: This can overflow!
-                _volitalteFrozen[to].amount += _castAmoint;
-            } else {
-                _volitalteFrozen[to].amount = _castAmoint;
-            }
-            _volitalteFrozen[to].blockNumber = _castBlockNumber;
+            _volitalteFrozen[to][block.number] += amount;
         }
     }
 }

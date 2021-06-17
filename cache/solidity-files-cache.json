@@ -38,8 +38,8 @@
       ]
     },
     "/home/ivn/Documents/Eth/blocking-token/contracts/Unspendable.sol": {
-      "lastModificationDate": 1623915772353,
-      "contentHash": "ccf74d7fd2cef9333a3f0c40d463b76c",
+      "lastModificationDate": 1623918285812,
+      "contentHash": "5dfd5a14febee8c933c25653206a707e",
       "sourceName": "contracts/Unspendable.sol",
       "solcConfig": {
         "version": "0.8.4",
