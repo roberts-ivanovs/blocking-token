@@ -50,6 +50,17 @@ describe('Unspendable', function () {
         (await contract.balanceOf(await owner.getAddress())).toString(),
       ).to.equal('100000000000000000000');
     });
+    it('Contract has storage coins', async function () {
+      expect(
+        (await contract.balanceOf(await owner.getAddress())).toString(),
+      ).to.equal('100000000000000000000');
+    });
+    it('Contract has storage coins', async function () {
+      expect((await contract.weiPerToken()).toString()).to.equal('1000');
+    });
+    it('Owner set', async function () {
+      expect(await contract.owner()).to.equal(await owner.getAddress());
+    });
   });
 
   describe('Blocking behaviour tests', function () {
