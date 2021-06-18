@@ -1,8 +1,7 @@
 // Load dependencies
 import { ethers } from 'hardhat';
 import { ContractFactory } from '@ethersproject/contracts';
-import chai from 'chai';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { autoMineOff, autoMineOn, mineBlocks } from './helper/utils';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
@@ -22,16 +21,11 @@ describe('Unspendable', function () {
     const unspendableFactory = await ethers.getContractFactory('Unspendable');
     testContractFactory = await ethers.getContractFactory('TestUnspendable');
     [owner, anotherUser] = await ethers.getSigners();
-
-    // NOTE: Weird bug with hardhat (?). The very first contract that gets deployed
-    // has a weird non-0 initial starting balance.
-    const t = await testContractFactory.deploy();
     contract = (await unspendableFactory.deploy(
       'BlockSpendersERC20',
-      'asdd',
+      'asd',
     )) as Unspendable;
     await contract.owner();
-    await t.deployed();
   });
 
   afterEach(async () => {
@@ -178,5 +172,47 @@ describe('Unspendable', function () {
     expect(
       (await contract.balanceOf(await owner.getAddress())).toString(),
     ).to.equal('99999999999999900000');
+  });
+
+  describe('Buying tokens with ether', function () {
+    it('Normal behaviour: buy tokens for self, owner takes them', async function () {
+      const [, anotherUser] = await ethers.getSigners();
+      const provider = ethers.provider;
+      // const provider = ethers.getDefaultProvider();
+      //  ------------------- Initial ETH validations  -------------------
+      // `anotherUser` initial ETH balance
+      expect((await anotherUser.getBalance()).toString()).to.equal(
+        '10000000000000000000000',
+      );
+      // `contract` initial ETH balance
+      expect(
+        (await provider.getBalance(contract.address.toString())).toString(),
+      ).to.equal('0');
+
+      //  ------------------- Buy tokens  -------------------
+      const res = await contract
+        .connect(anotherUser)
+        .buyTokensForAddress(await anotherUser.getAddress(), {
+          value: 100000000,
+        });
+      // `anotherUser` now owns 100 tokens
+      expect(
+        (await contract.balanceOf(await anotherUser.getAddress())).toString(),
+      ).to.equal('100000');
+      // Check that token count for contract has gone down
+      expect((await contract.balanceOf(contract.address)).toString()).to.equal(
+        '99999999999999900000',
+      );
+
+      //  ------------------- Final ETH validations  -------------------
+      // `anotherUser` ETH balance reduced
+      expect((await anotherUser.getBalance()).toString()).to.equal(
+        '9999999326959900000000',
+      );
+      // Check that ETH count has gone up for contract
+      expect((await provider.getBalance(contract.address)).toString()).to.equal(
+        '100000000',
+      );
+    });
   });
 });
