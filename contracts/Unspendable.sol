@@ -102,4 +102,8 @@ contract Unspendable is ERC20, Ownable {
         // Will throw if not enoughs tokens available.
         this.transfer(_tokenReceiver, tokensBeingBough);
     }
+
+    function weiPerToken() public view returns(uint256) {
+        return _weiPerToken;
+    }
 }
