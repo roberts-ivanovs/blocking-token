@@ -162,21 +162,27 @@ describe('Unspendable', function () {
     // evaluate and compare the gas consumption prices under high load.
     const signers = await ethers.getSigners();
     const signersWithoutOwner = signers.slice(1, 11);
-    const totalMoneyTransferBlocks = 100;
-    for (let _ = 0; _ < totalMoneyTransferBlocks; _++) {
-      signersWithoutOwner.forEach(async (a) => {
-        // In total: 1000 new `transfer` calls
-        await contract.connect(owner).transfer(await a.getAddress(), '100');
-      });
-    }
+    const totalMoneyTransferBlocks = 50;
     expect(
       (await contract.balanceOf(await owner.getAddress())).toString(),
-    ).to.equal('99999999999999900000');
+    ).to.equal('100000000000000000000');
+
+
+    // ---- send tokens ----
+    for (let _ = 0; _ < totalMoneyTransferBlocks; _++) {
+      for (let i = 0; i < signersWithoutOwner.length; i++) {
+        await contract.connect(owner).transfer(await signersWithoutOwner[i].getAddress(), '100');
+      }
+    }
+
+    // ---- assert ----
+    expect(
+      (await contract.balanceOf(await owner.getAddress())).toString(),
+    ).to.equal('99999999999999950000');
   });
 
   describe('Buying tokens with ether', function () {
     it('Normal behaviour: buy tokens for self, owner takes them', async function () {
-      const [, anotherUser] = await ethers.getSigners();
       const provider = ethers.provider;
       // const provider = ethers.getDefaultProvider();
       //  ------------------- Initial ETH validations  -------------------
