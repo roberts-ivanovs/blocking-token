@@ -1,5 +1,5 @@
 // Load dependencies
-import { ethers } from 'hardhat';
+import { ethers, network } from 'hardhat';
 import { ContractFactory } from '@ethersproject/contracts';
 import chai, { expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
@@ -31,6 +31,10 @@ describe('Unspendable', function () {
   afterEach(async () => {
     // Do not leak test states
     await autoMineOn();
+    await network.provider.request({
+      method: 'hardhat_reset',
+      params: [],
+    });
   });
 
   // Test case
@@ -167,11 +171,12 @@ describe('Unspendable', function () {
       (await contract.balanceOf(await owner.getAddress())).toString(),
     ).to.equal('100000000000000000000');
 
-
     // ---- send tokens ----
     for (let _ = 0; _ < totalMoneyTransferBlocks; _++) {
       for (let i = 0; i < signersWithoutOwner.length; i++) {
-        await contract.connect(owner).transfer(await signersWithoutOwner[i].getAddress(), '100');
+        await contract
+          .connect(owner)
+          .transfer(await signersWithoutOwner[i].getAddress(), '100');
       }
     }
 
@@ -184,7 +189,6 @@ describe('Unspendable', function () {
   describe('Buying tokens with ether', function () {
     it('Normal behaviour: buy tokens for self, owner takes them', async function () {
       const provider = ethers.provider;
-      // const provider = ethers.getDefaultProvider();
       //  ------------------- Initial ETH validations  -------------------
       // `anotherUser` initial ETH balance
       expect((await anotherUser.getBalance()).toString()).to.equal(
@@ -196,7 +200,7 @@ describe('Unspendable', function () {
       ).to.equal('0');
 
       //  ------------------- Buy tokens  -------------------
-      const res = await contract
+      await contract
         .connect(anotherUser)
         .buyTokensForAddress(await anotherUser.getAddress(), {
           value: 100000000,
@@ -221,4 +225,7 @@ describe('Unspendable', function () {
       );
     });
   });
+  // TODO Buy tokens wih ether for someone else
+  // TODO Owner withdraw
+  // TODO Owner change price
 });
