@@ -96,9 +96,11 @@ contract Unspendable is ERC20, Ownable {
 
     /* Buy tokens for someone (or yourself)
      */
-    function buyTokensForAddress(address _tokenReceiver) public payable {
+    function buyTokensForAddress(address payable _tokenReceiver) public payable {
+        // NOTE: Excess ether will NOT be sent back. Should it be?
         uint256 tokensBeingBough = msg.value / _weiPerToken;
-        // Using up the contracts own supply.
+
+        // Using up the contracts own supply of tokens.
         // Will throw if not enoughs tokens available.
         this.transfer(_tokenReceiver, tokensBeingBough);
     }
