@@ -38,8 +38,8 @@
       ]
     },
     "/home/ivn/Documents/Eth/blocking-token/contracts/Unspendable.sol": {
-      "lastModificationDate": 1623915772353,
-      "contentHash": "ccf74d7fd2cef9333a3f0c40d463b76c",
+      "lastModificationDate": 1623998737871,
+      "contentHash": "0b43615cfdd90f42203811951b91c569",
       "sourceName": "contracts/Unspendable.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -64,7 +64,8 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
         "^0.8"
@@ -247,6 +248,42 @@
       ],
       "artifacts": [
         "Migrations"
+      ]
+    },
+    "/home/ivn/Documents/Eth/blocking-token/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
+      "lastModificationDate": 1623745598713,
+      "contentHash": "17d9f40220b0ab370db2c77e7c92c4ef",
+      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Ownable"
       ]
     }
   }
