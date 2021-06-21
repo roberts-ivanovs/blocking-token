@@ -12,13 +12,15 @@ contract Unspendable is ERC20, Ownable {
     }
     // Track uers and their frozen funds
     mapping(address => FrozenTokens) private _volitalteFrozen;
-    // The price per each ERC20 token
-    uint256 private _weiPerToken;
+    // _weiPerTokenSlice == ERC20 * (-10**uint256(decimals()))
+    uint256 private _weiPerTokenSlice;
 
     constructor(string memory name, string memory symbol) ERC20(name, symbol) {
         _mint(msg.sender, 100 * 10**uint256(decimals()));
         _mint(address(this), 100 * 10**uint256(decimals())); // People will buy these tokens
-        _weiPerToken = 1000;
+        // NOTE: One token -> 1 * 10**uint256(decimals()).
+        // This price represents the 1 * (-10**uint256(decimals())) of a token.
+        _weiPerTokenSlice = 1000;
     }
 
     // ---------------------- Internal logic ----------------------
@@ -77,8 +79,8 @@ contract Unspendable is ERC20, Ownable {
 
     /* Set the new price per token
      */
-    function setTokenRateInWei(uint256 _newPrice) public onlyOwner {
-        _weiPerToken = _newPrice;
+    function setTokenSliceRateInWei(uint256 _newPrice) public onlyOwner {
+        _weiPerTokenSlice = _newPrice;
     }
 
     /* Increase the total supply of tokens for the address of THIS contract
@@ -98,14 +100,14 @@ contract Unspendable is ERC20, Ownable {
      */
     function buyTokensForAddress(address payable _tokenReceiver) public payable {
         // NOTE: Excess ether will NOT be sent back. Should it be?
-        uint256 tokensBeingBought = msg.value / _weiPerToken;
+        uint256 tokensBeingBought = msg.value / _weiPerTokenSlice;
 
         // Using up the contracts own supply of tokens.
         // Will throw if not enoughs tokens available.
         this.transfer(_tokenReceiver, tokensBeingBought);
     }
 
-    function weiPerToken() public view returns(uint256) {
-        return _weiPerToken;
+    function weiPerTokenSlice() public view returns(uint256) {
+        return _weiPerTokenSlice;
     }
 }

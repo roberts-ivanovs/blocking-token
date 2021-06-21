@@ -38,8 +38,8 @@
       ]
     },
     "/home/ivn/Documents/Eth/blocking-token/contracts/Unspendable.sol": {
-      "lastModificationDate": 1624271227143,
-      "contentHash": "c91618b341e18b84b30dece899bc3350",
+      "lastModificationDate": 1624280878562,
+      "contentHash": "102a28e3b53753baa9756e39962707ce",
       "sourceName": "contracts/Unspendable.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -284,6 +284,40 @@
       ],
       "artifacts": [
         "Ownable"
+      ]
+    },
+    "/home/ivn/Documents/Eth/blocking-token/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1624008648222,
+      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
       ]
     }
   }

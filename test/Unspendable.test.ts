@@ -55,7 +55,7 @@ describe('Unspendable', function () {
       ).to.equal('100000000000000000000');
     });
     it('Tokens have a set price', async function () {
-      expect((await contract.weiPerToken()).toString()).to.equal('1000');
+      expect((await contract.weiPerTokenSlice()).toString()).to.equal('1000');
     });
     it('Owner set', async function () {
       expect(await contract.owner()).to.equal(await owner.getAddress());
@@ -243,8 +243,8 @@ describe('Unspendable', function () {
     });
 
     it('Change price of tokens', async function () {
-      await contract.connect(owner).setTokenRateInWei('0');
-      expect((await contract.weiPerToken()).toString()).to.equal('0');
+      await contract.connect(owner).setTokenSliceRateInWei('0');
+      expect((await contract.weiPerTokenSlice()).toString()).to.equal('0');
     });
     it('Increase total token supply', async function () {
       // Validate initial token count
