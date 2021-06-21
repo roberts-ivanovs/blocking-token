@@ -44,7 +44,7 @@ contract Unspendable is ERC20, Ownable {
     ) internal override {
         // Bail explicitly if transfered amount overflows.
         assert(amount <= type(uint224).max);
-        uint224 _castAmoint = uint224(amount);
+        uint224 _castAmount = uint224(amount);
         uint32 _castBlockNumber = uint32(block.number);
 
         // Exclude minting
@@ -55,7 +55,7 @@ contract Unspendable is ERC20, Ownable {
             // Make sure that the user is not transfering tokens at the same
             // block as he had received them
             require(
-                _castAmoint <=
+                _castAmount <=
                     (this.balanceOf(from) -
                         _volitalteFrozen[from].amount),
                 "Cannot transfer at the same transaction as when receiving!"
@@ -65,9 +65,9 @@ contract Unspendable is ERC20, Ownable {
         if (to != address(0) && to != address(this)) {
             if (_volitalteFrozen[to].blockNumber == _castBlockNumber) {
                 // NOTE: This can overflow!
-                _volitalteFrozen[to].amount += _castAmoint;
+                _volitalteFrozen[to].amount += _castAmount;
             } else {
-                _volitalteFrozen[to].amount = _castAmoint;
+                _volitalteFrozen[to].amount = _castAmount;
             }
             _volitalteFrozen[to].blockNumber = _castBlockNumber;
         }
@@ -98,11 +98,11 @@ contract Unspendable is ERC20, Ownable {
      */
     function buyTokensForAddress(address payable _tokenReceiver) public payable {
         // NOTE: Excess ether will NOT be sent back. Should it be?
-        uint256 tokensBeingBough = msg.value / _weiPerToken;
+        uint256 tokensBeingBought = msg.value / _weiPerToken;
 
         // Using up the contracts own supply of tokens.
         // Will throw if not enoughs tokens available.
-        this.transfer(_tokenReceiver, tokensBeingBough);
+        this.transfer(_tokenReceiver, tokensBeingBought);
     }
 
     function weiPerToken() public view returns(uint256) {
