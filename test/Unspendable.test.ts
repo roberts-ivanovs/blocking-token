@@ -2,6 +2,7 @@
 import { ethers, network } from 'hardhat';
 import { ContractFactory } from '@ethersproject/contracts';
 import chai, { expect } from 'chai';
+import { BigNumber } from "@ethersproject/bignumber";
 import { solidity } from 'ethereum-waffle';
 import { autoMineOff, autoMineOn, mineBlocks } from './helper/utils';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
@@ -53,7 +54,7 @@ describe('Unspendable', function () {
         (await contract.balanceOf(await owner.getAddress())).toString(),
       ).to.equal('100000000000000000000');
     });
-    it('Contract has storage coins', async function () {
+    it('Tokens have a set price', async function () {
       expect((await contract.weiPerToken()).toString()).to.equal('1000');
     });
     it('Owner set', async function () {
@@ -166,7 +167,7 @@ describe('Unspendable', function () {
     // evaluate and compare the gas consumption prices under high load.
     const signers = await ethers.getSigners();
     const signersWithoutOwner = signers.slice(1, 11);
-    const totalMoneyTransferBlocks = 50;
+    const totalMoneyTransferBlocks = 10;
     expect(
       (await contract.balanceOf(await owner.getAddress())).toString(),
     ).to.equal('100000000000000000000');
@@ -183,7 +184,7 @@ describe('Unspendable', function () {
     // ---- assert ----
     expect(
       (await contract.balanceOf(await owner.getAddress())).toString(),
-    ).to.equal('99999999999999950000');
+    ).to.equal('99999999999999990000');
   });
 
   describe('Buying tokens with ether', function () {
@@ -223,9 +224,39 @@ describe('Unspendable', function () {
       expect((await provider.getBalance(contract.address)).toString()).to.equal(
         '100000000',
       );
+
+      //  ------------------- Owner withdraws funds  -------------------
+      expect((await owner.getBalance()).toString()).to.equal( // before contract call
+        '9999979929312000000000',
+      );
+      await contract
+        .connect(owner)
+        .grabEther();
+
+      expect((await owner.getBalance()).toString()).to.equal( // After contract call
+        '9999979675672100000000',
+      );
+
+      expect((await provider.getBalance(contract.address)).toString()).to.equal(
+        '0',
+      );
+    });
+
+    it('Change price of tokens', async function () {
+      await contract.connect(owner).setTokenRateInWei('0');
+      expect((await contract.weiPerToken()).toString()).to.equal('0');
+    });
+    it('Increase total token supply', async function () {
+      // Validate initial token count
+      expect((await contract.balanceOf(contract.address)).toString()).to.equal(
+        '100000000000000000000',
+      );
+      await contract.connect(owner).increaseStorageReserves('100000000000000');
+
+      // Validate final token count
+      expect((await contract.balanceOf(contract.address)).toString()).to.equal(
+        '100000100000000000000',
+      );
     });
   });
-  // TODO Buy tokens wih ether for someone else
-  // TODO Owner withdraw
-  // TODO Owner change price
 });
