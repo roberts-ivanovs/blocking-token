@@ -16,6 +16,7 @@
     "@types/mocha": "^8.2.2",
     "@types/node": "^15.12.2",
     "chai": "^4.3.4",
+    "dotenv": "^10.0.0",
     "ethereum-waffle": "^3.3.0",
     "hardhat": "^2.3.3",
     "hardhat-ethers": "^1.0.1",

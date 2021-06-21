@@ -2,3 +2,5 @@ node_modules
 artifacts
 yarn-error.log
 typechain
+.env
+flattened
