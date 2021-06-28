@@ -17,16 +17,12 @@ export function Form({ provider }: Props): ReactElement {
   useEffect(() => {
     if (provider) {
       const signer = provider.getSigner();
-      signer.getAddress().then(async (address) => {
-        console.log('Account:', address);
-        const unsp: Unspendable = new ethers.Contract(
-          '0xefc26881EA4946c486fC5950b42D6A9fe9c0b612',
-          _abiUnspendable.abi,
-          signer,
-        ) as unknown as Unspendable;
-        const unspendableWithSigner = unsp.connect(address);
-        setUnspendable(unspendableWithSigner);
-      });
+      const unsp: Unspendable = new ethers.Contract(
+        '0xefc26881EA4946c486fC5950b42D6A9fe9c0b612',
+        _abiUnspendable.abi,
+        signer,
+      ) as unknown as Unspendable;
+      setUnspendable(unsp);
     }
   }, [provider]);
 
