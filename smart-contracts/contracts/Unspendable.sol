@@ -12,14 +12,14 @@ contract Unspendable is ERC20, Ownable {
     }
     // Track uers and their frozen funds
     mapping(address => FrozenTokens) private _volitalteFrozen;
-    // _weiPerTokenSlice == ERC20 * (-10**uint256(decimals()))
+    // _weiPerTokenSlice == ERC20 * (10**-uint256(decimals()))
     uint256 private _weiPerTokenSlice;
 
     constructor(string memory name, string memory symbol) ERC20(name, symbol) {
         _mint(msg.sender, 100 * 10**uint256(decimals()));
         _mint(address(this), 100 * 10**uint256(decimals())); // People will buy these tokens
-        // NOTE: One token -> 1 * 10**uint256(decimals()).
-        // This price represents the 1 * (-10**uint256(decimals())) of a token.
+        // NOTE: One token -> 1 * 10**-uint256(decimals()).
+        // This price represents the 1 * (10**-uint256(decimals())) of a token.
         _weiPerTokenSlice = 1000;
     }
 

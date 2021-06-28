@@ -218,7 +218,7 @@ describe('Unspendable', function () {
       //  ------------------- Final ETH validations  -------------------
       // `anotherUser` ETH balance reduced
       expect((await anotherUser.getBalance()).toString()).to.equal(
-        '9999999326959900000000',
+        '9999999326607900000000',
       );
       // Check that ETH count has gone up for contract
       expect((await provider.getBalance(contract.address)).toString()).to.equal(
@@ -227,14 +227,14 @@ describe('Unspendable', function () {
 
       //  ------------------- Owner withdraws funds  -------------------
       expect((await owner.getBalance()).toString()).to.equal( // before contract call
-        '9999979929312000000000',
+        '9999979929216000000000',
       );
       await contract
         .connect(owner)
         .grabEther();
 
       expect((await owner.getBalance()).toString()).to.equal( // After contract call
-        '9999979675672100000000',
+        '9999979675400100000000',
       );
 
       expect((await provider.getBalance(contract.address)).toString()).to.equal(
