@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import React, { ReactElement, useCallback, useState } from 'react';
+import { ReactElement, useCallback, useState } from 'react';
 import { Form } from './Form';
 
 export function Main(): ReactElement {

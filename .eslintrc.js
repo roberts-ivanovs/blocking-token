@@ -14,6 +14,8 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+    // suppress errors for missing 'import React' in files
+    'react/react-in-jsx-scope': 'off',
     'react/require-default-props': [0],
     'import/prefer-default-export': 'off',
     'import/no-default-export': 'error',

@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
-import React, { ReactElement, useMemo, useState } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
+import { Unspendable } from '../../smart-contracts/typechain/Unspendable';
 
 interface Props {
   provider?: ethers.providers.Web3Provider;
@@ -7,6 +8,7 @@ interface Props {
 
 export function Form({ provider }: Props): ReactElement {
   const [weiToSend, setWeiToSend] = useState(0);
+  const [unpsnedable, setUnspendable] = useState<Unspendable>();
 
   const isActive = useMemo(() => !!provider, [provider]);
 
@@ -15,10 +17,8 @@ export function Form({ provider }: Props): ReactElement {
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          if (!isActive) return;
-
+          // if (!isActive) return;
           // TODO: Send the transaction
-
         }}
       >
         <input
