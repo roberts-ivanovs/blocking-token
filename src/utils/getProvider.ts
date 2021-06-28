@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 export async function getProvider(): Promise<ethers.providers.Web3Provider | null> {
   const windowTyped = window as any;
   if (windowTyped.ethereum) {
-    await windowTyped.ethereum.enable();
+    await windowTyped.ethereum.send('eth_requestAccounts');
     return new ethers.providers.Web3Provider(windowTyped.ethereum);
   } if (windowTyped.web3) {
     const web3Provider = windowTyped.web3.currentProvider;
