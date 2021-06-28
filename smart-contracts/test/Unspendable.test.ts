@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // Load dependencies
 import { ethers, network } from 'hardhat';
 import { ContractFactory } from '@ethersproject/contracts';

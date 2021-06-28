@@ -1,36 +1,60 @@
 import { ethers } from 'ethers';
-import { ReactElement, useMemo, useState } from 'react';
-import { Unspendable } from '../../smart-contracts/typechain/Unspendable';
+import {
+  ReactElement, useEffect, useMemo, useState,
+} from 'react';
+import _abiUnspendable from 'smart-contracts/artifacts/contracts/Unspendable.sol/Unspendable.json';
+import { Unspendable } from 'smart-contracts/typechain/Unspendable';
 
 interface Props {
   provider?: ethers.providers.Web3Provider;
 }
 
 export function Form({ provider }: Props): ReactElement {
-  const [weiToSend, setWeiToSend] = useState(0);
-  const [unpsnedable, setUnspendable] = useState<Unspendable>();
+  const [ether, setEther] = useState('0');
+  const [unspendable, setUnspendable] = useState<Unspendable>();
+  const isActive = useMemo(() => !!(provider && unspendable), [provider, unspendable]);
 
-  const isActive = useMemo(() => !!provider, [provider]);
+  useEffect(() => {
+    if (provider) {
+      const signer = provider.getSigner();
+      const unsp: Unspendable = new ethers.Contract(
+        '0xefc26881EA4946c486fC5950b42D6A9fe9c0b612',
+        _abiUnspendable.abi,
+        signer,
+      ) as unknown as Unspendable;
+      signer.getAddress().then((signerAddress) => {
+        const unspendableWithSigner = unsp.connect(signerAddress);
+        setUnspendable(unspendableWithSigner);
+      });
+    }
+  }, [provider]);
 
   return (
     <div>
       <form
-        onSubmit={(event) => {
+        onSubmit={async (event) => {
           event.preventDefault();
-          // if (!isActive) return;
-          // TODO: Send the transaction
+          if (!isActive) return;
+          // Send the transaction
+          if (provider && unspendable) {
+            const signer = provider.getSigner();
+            const signerAddress = await signer.getAddress();
+            const wei = Number(ether) * 10 ** 18;
+            // const tx = await signer.signTransaction({ value: wei });
+            const res = await unspendable.buyTokensForAddress(signerAddress, { value: wei });
+          }
         }}
       >
         <input
           disabled={!isActive}
-          value={weiToSend}
-          onChange={(e) => setWeiToSend(Number(e.target.value))}
+          value={ether}
+          onChange={(e) => setEther(e.target.value)}
           type="number"
-          placeholder="0"
+          placeholder="Ether to send"
           required
         />
         <button type="submit" disabled={!isActive}>
-          Send
+          Buy tokens
         </button>
       </form>
     </div>

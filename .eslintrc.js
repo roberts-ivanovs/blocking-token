@@ -12,10 +12,29 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx', 'd.ts'],
+      },
+    },
+  },
   plugins: ['react', '@typescript-eslint'],
   rules: {
     // suppress errors for missing 'import React' in files
     'react/react-in-jsx-scope': 'off',
+    'import/extensions': 'off',
+    // 'import/extensions': [
+    //   'error',
+    //   'ignorePackages',
+    //   {
+    //     js: 'never',
+    //     jsx: 'never',
+    //     ts: 'never',
+    //     tsx: 'never',
+    //     'd.ts': 'never',
+    //   },
+    // ],
     'react/require-default-props': [0],
     'import/prefer-default-export': 'off',
     'import/no-default-export': 'error',
@@ -31,5 +50,7 @@ module.exports = {
     ],
     'no-void': ['off'],
     quotes: [2, 'single', { avoidEscape: true }],
+    'import/no-unresolved': 'off',
+    'no-unused-vars': 1,
   },
 };

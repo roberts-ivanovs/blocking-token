@@ -7,7 +7,7 @@ import { HardhatUserConfig } from 'hardhat/config';
 import dotenv from 'dotenv';
 
 const env = dotenv.config();
-const { GOERLI_PRIVATE_KEY } = env.parsed!; // TODO read this from a .env variable (?)
+const { GOERLI_PRIVATE_KEY } = env.parsed!;
 
 const config: HardhatUserConfig = {
   solidity: '0.8.4',
