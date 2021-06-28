@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import {
   ReactElement, useEffect, useMemo, useState,
 } from 'react';
@@ -10,20 +10,21 @@ interface Props {
 }
 
 export function Form({ provider }: Props): ReactElement {
-  const [ether, setEther] = useState('0');
+  const [wei, setWei] = useState('0');
   const [unspendable, setUnspendable] = useState<Unspendable>();
   const isActive = useMemo(() => !!(provider && unspendable), [provider, unspendable]);
 
   useEffect(() => {
     if (provider) {
       const signer = provider.getSigner();
-      const unsp: Unspendable = new ethers.Contract(
-        '0xefc26881EA4946c486fC5950b42D6A9fe9c0b612',
-        _abiUnspendable.abi,
-        signer,
-      ) as unknown as Unspendable;
-      signer.getAddress().then((signerAddress) => {
-        const unspendableWithSigner = unsp.connect(signerAddress);
+      signer.getAddress().then(async (address) => {
+        console.log('Account:', address);
+        const unsp: Unspendable = new ethers.Contract(
+          '0xefc26881EA4946c486fC5950b42D6A9fe9c0b612',
+          _abiUnspendable.abi,
+          signer,
+        ) as unknown as Unspendable;
+        const unspendableWithSigner = unsp.connect(address);
         setUnspendable(unspendableWithSigner);
       });
     }
@@ -38,19 +39,19 @@ export function Form({ provider }: Props): ReactElement {
           // Send the transaction
           if (provider && unspendable) {
             const signer = provider.getSigner();
-            const signerAddress = await signer.getAddress();
-            const wei = Number(ether) * 10 ** 18;
-            // const tx = await signer.signTransaction({ value: wei });
-            const res = await unspendable.buyTokensForAddress(signerAddress, { value: wei });
+            const address = await signer.getAddress();
+            console.log(signer);
+            console.log(address);
+            const res = await unspendable.buyTokensForAddress(address, { value: wei });
           }
         }}
       >
         <input
           disabled={!isActive}
-          value={ether}
-          onChange={(e) => setEther(e.target.value)}
+          value={wei}
+          onChange={(e) => setWei(e.target.value)}
           type="number"
-          placeholder="Ether to send"
+          placeholder="Wei to send"
           required
         />
         <button type="submit" disabled={!isActive}>
